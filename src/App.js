@@ -164,7 +164,7 @@ class App extends Component {
       //try to fetch data from graphQL API - use only standard fetch method
       try {
         this.setState({ isBusy: true, selectedFrom: this.state.fromPlace, selectedTo: this.state.toPlace });
-       
+
         graphQLService.fetchFlightsData(this.state.fromPlace, this.state.toPlace, this.state.fromDate, pageType, this.state.pageInfo, this.state.itemsPerPage)
           .then(res => res.json())
           .then(t => {
@@ -206,7 +206,11 @@ class App extends Component {
           let frominp = document.getElementById(inputName);
           let fib = frominp.getBoundingClientRect();
 
-          this.setState({ isBusy: false, selectedLocationIndex: 0, searchedLocations: locations, acLeft: fib.left + 6, acTop: fib.top + 33 });
+          this.setState({
+            isBusy: false, selectedLocationIndex: 0, searchedLocations: locations,
+            acLeft: fib.left + 6,
+            acTop: fib.top + window.scrollY + 33
+          });
         }).catch(c => {
           this.setState({ isBusy: false, selectedLocationIndex: 0, searchedLocations: [] });
         });
@@ -229,7 +233,7 @@ class App extends Component {
     event.target.select();
   }
 
-//controll location inputs with suggestion and search the flights
+  //controll location inputs with suggestion and search the flights
   placeKeyUp(event) {
     if (this.state.searchedLocations.length > 0) {
       //up
