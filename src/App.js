@@ -66,7 +66,7 @@ class App extends Component {
       //location(place) from - place of departure
       fromPlace: "Prague",
       //location(place) to - place of arrivle
-      toPlace: "Paris",
+      toPlace: "Kathmandu",
       //date od departure
       fromDate: this.todayString,
       //prop for fetch flights metod - we wouldnt bind directly fromPlace prop
