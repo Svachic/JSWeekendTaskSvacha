@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+//custom suggestion list component
 class SuggestionList extends Component {
 
     render() {

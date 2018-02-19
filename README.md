@@ -3,9 +3,9 @@
 
 This is a very simple flights search application write in React using kiwi.com API to fetch the data. Type only from, where to and when you want to flight and search. 
 
-This is my very first experience with the React and also with GraphQL. I know that exist some good libraries(Apollo or Relay) for GraphQL, but I use only basic fetch method to fetch the data from the GraphQL API. There is also some basic suggestion of locations and basic pagination of flights result.
+This is my first experience with the React and also with GraphQL. I know that exist some good libraries(Apollo or Relay) for GraphQL, but I use only basic fetch method to fetch the data from the GraphQL API. There is also some basic locations suggestion using my own component and basic pagination of flights result.
 
-DEMO: http://stezky.online/jsw/
+DEMO: http://happylive.cz/jsw/
 
 How to install/run/build/test the application:
 

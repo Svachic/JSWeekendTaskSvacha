@@ -302,7 +302,7 @@ class App extends Component {
                 selectedLocationIndex={this.state.selectedLocationIndex}
                 selectLocation={this.selectLocation}
                 acLeft={this.state.acLeft}
-                scTop={this.state.acTop}>
+                acTop={this.state.acTop}>
               </SuggestionList>
 
               <TextField
