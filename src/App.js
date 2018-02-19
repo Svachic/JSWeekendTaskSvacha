@@ -365,7 +365,7 @@ class App extends Component {
         <AppBar position="static" color="primary">
           <Toolbar>
             <Typography variant="title">
-              Simple flight search app
+              Simple flights search app
           </Typography>
           </Toolbar>
         </AppBar>
