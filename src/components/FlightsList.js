@@ -25,14 +25,14 @@ class FlightsList extends Component {
                     <div style={{ padding: "7px", width: "115px", display: "inline-block" }}>
                         <label style={{ fontWeight: "500", fontSize: "20px" }}> {item.node.price.amount} €
                       </label>
-                        <label style={{ fontSize: "12px", display: "block", marginTop: "14px" }}>Duration: {this.getTimeString(item.node.duration)}
+                        <label style={{ fontSize: "12px", display: "block", marginTop: "14px" }}>Duration: <span style={{ fontWeight:"500"}}>{this.getTimeString(item.node.duration)}</span>
                         </label>
                     </div>
                     <div style={{ width: "1px", height: "100%", backgroundColor: "#efefef", display: "inline-block" }}>
                     </div>
                     <div style={{ padding: "7px", display: "inline-block", width: "231px" }}>
 
-                        <label style={{ fontSize: "14px", display: "block" }}>Departure: {new Date(item.node.departure.time).toLocaleString()}
+                        <label style={{ fontSize: "14px", display: "block" }}>Departure: {new Date(item.node.departure.time).toLocaleDateString()} <span style={{ fontWeight:"500"}}>{new Date(item.node.departure.time).toLocaleTimeString()}</span>
                         </label>
                         <label style={{ fontSize: "12px", display: "block", marginTop: "8px", marginBottom: "2px" }}>{item.node.legs.length === 1 ? "direct flight" : "Stops: " + (item.node.legs.length - 1)}
                         </label>
