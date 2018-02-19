@@ -1,0 +1,51 @@
+.flight-paper{
+    width: 100%;
+min-height: 65px;
+margin-top: 10px;
+color: rgb(34, 34, 35);
+}
+
+.flight-paper-item{
+    padding: 7px;
+display: inline-block;
+}
+
+.flight-paper-item-1{
+    width: 115px;
+}
+
+.flight-paper-item-2{
+    width: 231px;
+}
+
+.price-label{
+    font-weight: 500;
+font-size: 20px;
+}
+
+.duration-label{
+    font-size: 12px;
+display: block;
+margin-top: 14px;
+}
+
+.bold-label{
+    font-weight: 500;
+}
+
+.departure-label{
+    font-size: 14px;
+display: block;
+}
+
+.stops-label{
+    font-size: 12px;
+display: block;
+margin-top: 8px;
+margin-bottom: 2px;
+}
+
+.fromto-label{
+    font-size: 12px;
+display: block;
+}

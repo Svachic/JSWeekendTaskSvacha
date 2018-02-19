@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
+import './FlightsList.css';
 
 class FlightsList extends Component {
 
@@ -19,28 +20,27 @@ class FlightsList extends Component {
     render() {
         return (
             this.props.flights.map((item, i) =>
-                <Paper key={i} style={{ width: "100%", minHeight: "65px", marginTop: "10px", color: "#222223" }}>
+                <Paper key={i} className="flight-paper">
 
 
-                    <div style={{ padding: "7px", width: "115px", display: "inline-block" }}>
-                        <label style={{ fontWeight: "500", fontSize: "20px" }}> {item.node.price.amount} €
+                    <div className="flight-paper-item flight-paper-item-1">
+                        <label className="price-label"> {item.node.price.amount} €
                       </label>
-                        <label style={{ fontSize: "12px", display: "block", marginTop: "14px" }}>Duration: <span style={{ fontWeight:"500"}}>{this.getTimeString(item.node.duration)}</span>
+                        <label className="duration-label">Duration: <span className="bold-label">{this.getTimeString(item.node.duration)}</span>
                         </label>
                     </div>
-                    <div style={{ width: "1px", height: "100%", backgroundColor: "#efefef", display: "inline-block" }}>
-                    </div>
-                    <div style={{ padding: "7px", display: "inline-block", width: "231px" }}>
 
-                        <label style={{ fontSize: "14px", display: "block" }}>Departure: {new Date(item.node.departure.time).toLocaleDateString()} <span style={{ fontWeight:"500"}}>{new Date(item.node.departure.time).toLocaleTimeString()}</span>
+                    <div className="flight-paper-item flight-paper-item-2">
+
+                        <label className="departure-label">Departure: {new Date(item.node.departure.time).toLocaleDateString()} <span className="bold-label">{new Date(item.node.departure.time).toLocaleTimeString()}</span>
                         </label>
-                        <label style={{ fontSize: "12px", display: "block", marginTop: "8px", marginBottom: "2px" }}>{item.node.legs.length === 1 ? "direct flight" : "Stops: " + (item.node.legs.length - 1)}
+                        <label className="stops-label">{item.node.legs.length === 1 ? "direct flight" : "Stops: " + (item.node.legs.length - 1)}
                         </label>
 
-                        <label style={{ fontSize: "12px", display: "block" }}>From {this.props.selectedFrom} to {this.props.selectedTo}
+                        <label className="fromto-label">From {this.props.selectedFrom} to {this.props.selectedTo}
                         </label>
                     </div>
-                    <div style={{ padding: "7px", display: "inline-block" }}>
+                    <div className="flight-paper-item">
 
                         {item.node.airlines.map((imgitem, iim) =>
                             <img className="al-img" key={iim} src={imgitem.logoUrl} title={imgitem.name} alt={imgitem.name} />

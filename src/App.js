@@ -8,9 +8,8 @@ import TextField from 'material-ui/TextField';
 import FlightsList from './components/FlightsList';
 import Header from './components/Header';
 import Pager from './components/Pager';
-
-//graphQL url of API
-const graphQLurl = 'https://graphql.kiwi.com';
+import SuggestionList from './components/SuggestionList';
+import GraphQLService from './services/GraphQLService';
 
 //Material UI theme - try to use Material-UI beta library (v1.0.0-beta.34)
 //lets use green theme :)
@@ -21,6 +20,8 @@ const theme = createMuiTheme({
   },
 });
 
+//GraphQL service to fetch the data from GraphQL API
+const graphQLService = new GraphQLService();
 
 class App extends Component {
 
@@ -63,9 +64,9 @@ class App extends Component {
       //selectedInputforSuggestion
       selectedLocationInput: "",
       //location(place) from - place of departure
-      fromPlace: "",
+      fromPlace: "Prague",
       //location(place) to - place of arrivle
-      toPlace: "",
+      toPlace: "Paris",
       //date od departure
       fromDate: this.todayString,
       //prop for fetch flights metod - we wouldnt bind directly fromPlace prop
@@ -93,6 +94,7 @@ class App extends Component {
 
   }
 
+  //use for default datepicker value and date control
   todayString = "";
 
   //handle input fiels - set state and suggest locations
@@ -120,29 +122,6 @@ class App extends Component {
     this.setState({
       [name]: value
     });
-  }
-
-  //return pagination string for graphQL query for flights
-  //type:1=if we search first time,2=if we go to next page,3=if we go to previous page
-  //pageInfo = current state of flights paging
-  //itemsCount = number of items to display on page
-  getPaginationString(type, pageInfo, itemsCount) {
-    let result = "";
-
-    //first page search
-    if (type === 1) {
-      result = ` first: ${itemsCount}`;
-    }
-    //next page
-    else if (type === 2) {
-      result = ` last: ${itemsCount}  , before: "${pageInfo.startCursor}"`;
-    }
-    //previous
-    else if (type === 3) {
-      result = ` first: ${itemsCount}  , after: "${pageInfo.endCursor}"`;
-    }
-
-    return result;
   }
 
   //first time search of flights
@@ -177,63 +156,16 @@ class App extends Component {
     this.fetchFlightsData(2);
   }
 
+  //fetch and process data from graphQL service
   fetchFlightsData(pageType) {
     if (this.state.isBusy || this.state.toPlace === "" || this.state.fromPlace === "" || this.state.fromDate === "") {
-      //we can wanr user about required fields...
-
+      //we can warn user about required fields... but now i disabled only search button
     } else {
       //try to fetch data from graphQL API - use only standard fetch method
       try {
         this.setState({ isBusy: true, selectedFrom: this.state.fromPlace, selectedTo: this.state.toPlace });
-
-        //construct graphQL query
-        let query = `{
-  allFlights(search: {from: {location: "${this.state.fromPlace}"},
-   to: {location: "${this.state.toPlace}"}, 
-   date: {exact: "${this.state.fromDate}"}},
-   ${ this.getPaginationString(pageType, this.state.pageInfo, this.state.itemsPerPage)}
-   ,options: {currency: EUR}) {    
-    pageInfo{
-      hasNextPage,
-      hasPreviousPage,
-      startCursor,
-      endCursor
-    },
-    edges {
-      cursor,
-      node {
-        airlines{
-          logoUrl,
-          name
-        },
-        departure {
-          time
-          localTime
-        }
-        legs {
-          id
-        }
-        airlines {
-          name
-        }
-        duration
-        price {
-          amount
-          currency
-        }
-      }
-    }
-  }
-}`;
-
-        //fetch the data
-        fetch(graphQLurl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query: query
-          }),
-        })
+       
+        graphQLService.fetchFlightsData(this.state.fromPlace, this.state.toPlace, this.state.fromDate, pageType, this.state.pageInfo, this.state.itemsPerPage)
           .then(res => res.json())
           .then(t => {
 
@@ -265,24 +197,8 @@ class App extends Component {
     //search only if search string length is greater then 1
     if (searchLoc !== null && searchLoc.length > 1) {
 
-      //fetch data of locations from graphQL api
-      fetch(graphQLurl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: `{
-          allLocations(search: "${searchLoc}", first: 5) {
-            edges {
-              node {
-                name
-                country {
-                  name
-                }
-              }
-            }
-          }
-        }` }),
-      })
+      //fetch data of locations
+      graphQLService.fetchLocationsData(searchLoc)
         .then(res => res.json())
         .then(t => {
           let locations = t.data.allLocations.edges;
@@ -301,6 +217,7 @@ class App extends Component {
       this.setState({ searchedLocations: [] });
   }
 
+  //clear andhide suggestion when blur location inputs
   placeBlur() {
     setTimeout(t => {
       this.setState({ searchedLocations: [], selectedLocationIndex: 0 });
@@ -312,7 +229,7 @@ class App extends Component {
     event.target.select();
   }
 
-
+//controll location inputs with suggestion and search the flights
   placeKeyUp(event) {
     if (this.state.searchedLocations.length > 0) {
       //up
@@ -336,13 +253,11 @@ class App extends Component {
     }
   }
 
-  //set selected suggested location to state
+  //set selected suggested location to the state
   selectLocation(name) {
 
     this.setState({ [this.state.selectedLocationInput]: name, searchedLocations: [] });
   }
-
-
 
   //render the component  
   render() {
@@ -355,7 +270,7 @@ class App extends Component {
 
         <Grid alignItems="center" container direction="column"  >
 
-          <Grid item style={{ maxWidth: "1000px", padding: "18px" }}>
+          <Grid item className="container-max">
             <form autoComplete="off" onSubmit={this.searchForFlights}>
               <TextField
                 id="fromPlace"
@@ -383,20 +298,12 @@ class App extends Component {
                 onChange={this.handleInputChange}
                 margin="normal" fullWidth />
 
-
-              {this.state.searchedLocations.length > 0 ? (
-                <div className="autocomplete" style={{ left: this.state.acLeft, top: this.state.acTop }}>
-                  {this.state.searchedLocations.map((item, i) =>
-                    <div key={i} className={"autocomplete-item " + (this.state.selectedLocationIndex === i ? "autocomplete-item-selected" : "")}
-                      onClick={this.selectLocation.bind(this, item.node.name)}>
-
-                      {item.node.name + (item.node.country !== null ? " (" + item.node.country.name + ")" : "")}
-                    </div>
-
-                  )}
-                </div>)
-                : ""}
-
+              <SuggestionList searchedLocations={this.state.searchedLocations}
+                selectedLocationIndex={this.state.selectedLocationIndex}
+                selectLocation={this.selectLocation}
+                acLeft={this.state.acLeft}
+                scTop={this.state.acTop}>
+              </SuggestionList>
 
               <TextField
                 id="fromDate"

@@ -9,7 +9,7 @@ class Pager extends Component {
         return (
             <div>
                 {this.props.flights.length > 0 ? (
-                    <Grid item container style={{ maxWidth: "1000px", padding: "18px" }}>
+                    <Grid item container className="container-max">
                         <Grid item xs={6}>
                             <Button disabled={this.props.isBusy || this.props.currentPage === 1} variant="raised" color="primary" onClick={this.props.previousFlightsPage} fullWidth >
                                 Previous
