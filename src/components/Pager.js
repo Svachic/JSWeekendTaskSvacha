@@ -16,7 +16,7 @@ class Pager extends Component {
                             </Button>
                         </Grid>
                         <Grid item xs={6} >
-                            <Button disabled={this.props.isBusy || (!this.props.movedNext && !this.props.pageInfo.hasNextPage)} variant="raised" color="primary" onClick={this.props.nextFlightsPage} fullWidth >
+                            <Button disabled={this.props.isBusy || (!this.props.movedNext && !this.props.pageInfo.hasNextPage) || (this.props.movedNext && !this.props.pageInfo.hasNextPage)} variant="raised" color="primary" onClick={this.props.nextFlightsPage} fullWidth >
                                 Next
                             </Button>
                         </Grid>
