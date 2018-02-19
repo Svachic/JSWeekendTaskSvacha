@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
 import Grid from 'material-ui/Grid';
-import AppBar from 'material-ui/AppBar';
 import Button from 'material-ui/Button';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import lightGreen from 'material-ui/colors/lightGreen';
 import TextField from 'material-ui/TextField';
-import { LinearProgress } from 'material-ui/Progress';
-import Paper from 'material-ui/Paper';
+import FlightsList from './components/FlightsList';
+import Header from './components/Header';
+import Pager from './components/Pager';
 
 //graphQL url of API
 const graphQLurl = 'https://graphql.kiwi.com';
@@ -344,17 +342,7 @@ class App extends Component {
     this.setState({ [this.state.selectedLocationInput]: name, searchedLocations: [] });
   }
 
-  //format minutes time to more readable format ##h ##m
-  getTimeString(minutes) {
 
-    let hours = minutes / 60.0;
-    let hrInt = parseInt(hours, 10);
-    let mins = hrInt > 0 ? parseInt((hours - hrInt) * 60.0, 10) : minutes;
-
-    let result = `${hrInt}h ${mins}m`;
-
-    return result;
-  }
 
   //render the component  
   render() {
@@ -362,20 +350,8 @@ class App extends Component {
       <MuiThemeProvider theme={theme}>
 
 
-        <AppBar position="static" color="primary">
-          <Toolbar>
-            <Typography variant="title">
-              Simple flights search app
-          </Typography>
-          </Toolbar>
-        </AppBar>
-
-        <div style={{ height: "8px" }}>
-          {this.state.isBusy ? (
-            <LinearProgress />
-          ) : ""}
-        </div>
-
+        <Header isBusy={this.state.isBusy}>
+        </Header>
 
         <Grid alignItems="center" container direction="column"  >
 
@@ -443,60 +419,18 @@ class App extends Component {
               </Button>
             </form>
 
-            {this.state.flights.map((item, i) =>
-              <Paper key={i} style={{ width: "100%", minHeight: "65px", marginTop: "10px", color: "#222223" }}>
+            <FlightsList flights={this.state.flights} selectedFrom={this.state.selectedFrom} selectedTo={this.state.selectedTo} >
+            </FlightsList>
 
 
-                <div style={{ padding: "7px", width: "115px", display: "inline-block" }}>
-                  <label style={{ fontWeight: "500", fontSize: "20px" }}> {item.node.price.amount} €
-                    </label>
-                  <label style={{ fontSize: "12px", display: "block", marginTop: "14px" }}>Duration: {this.getTimeString(item.node.duration)}
-                  </label>
-                </div>
-                <div style={{ width: "1px", height: "100%", backgroundColor: "#efefef", display: "inline-block" }}>
-                </div>
-                <div style={{ padding: "7px", display: "inline-block", width: "231px" }}>
-
-                  <label style={{ fontSize: "14px", display: "block" }}>Departure: {new Date(item.node.departure.time).toLocaleString()}
-                  </label>
-                  <label style={{ fontSize: "12px", display: "block", marginTop: "8px", marginBottom: "2px" }}>{item.node.legs.length === 1 ? "direct flight" : "Stops: " + (item.node.legs.length - 1)}
-                  </label>
-
-                  <label style={{ fontSize: "12px", display: "block" }}>From {this.state.selectedFrom} to {this.state.selectedTo}
-                  </label>
-                </div>
-                <div style={{ padding: "7px", display: "inline-block" }}>
-
-                  {item.node.airlines.map((imgitem, iim) =>
-                    <img className="al-img" key={iim} src={imgitem.logoUrl} title={imgitem.name} alt={imgitem.name} />
-                  )
-                  }
-                </div>
-              </Paper>
-
-            )}
-
-            {this.state.flights.length > 0 ? (
-              <Grid item container style={{ maxWidth: "1000px", padding: "18px" }}>
-                <Grid item xs={6}>
-                  <Button disabled={this.state.isBusy || this.state.currentPage === 1} variant="raised" color="primary" onClick={this.previousFlightsPage} fullWidth >
-                    Previous
-                </Button>
-                </Grid>
-                <Grid item xs={6} >
-                  <Button disabled={this.state.isBusy || (!this.state.movedNext && !this.state.pageInfo.hasNextPage)} variant="raised" color="primary" onClick={this.nextFlightsPage} fullWidth >
-                    Next
-                </Button>
-                </Grid>
-              </Grid>
-            )
-              :
-              (
-                <div className="no-results">
-                  NO RESULTS
-                </div>
-              )
-            }
+            <Pager isBusy={this.state.isBusy}
+              currentPage={this.state.currentPage}
+              movedNext={this.state.movedNext}
+              flights={this.state.flights}
+              pageInfo={this.state.pageInfo}
+              nextFlightsPage={this.nextFlightsPage}
+              previousFlightsPage={this.previousFlightsPage}>
+            </Pager>
 
           </Grid>
         </Grid>
